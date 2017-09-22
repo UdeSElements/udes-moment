@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove the deprecated `__dispatchEvent` function along with the 
 `udes-moment-language-changed` event.
 
-## [Unreleased - 2.1.1]
+## [Unreleased - 2.1.2]
+### Changed
+- Update documentation.
+
+## [2.1.1] - 2017-09-22
 ### Changed
 - Use eslint-config-udes and add the pre-commit hook.
 - Interval dates are now trimmed.

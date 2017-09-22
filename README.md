@@ -6,8 +6,8 @@ library.
 
 There are currently **2** components and **1** mixin available:
 - Components
-  - <udes-moment>
-  - <udes-moment-interval>
+  - \<udes-moment\>
+  - \<udes-moment-interval\>
 - Mixin
   - UdeS.MomentMixin
   
@@ -48,18 +48,12 @@ module.exports = {
 <custom-element-demo>
   <template>
     <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="udes-element.html">
+    <link rel="import" href="demo/udes-element-demo.html">
     <next-code-block></next-code-block>
   </template>
 </custom-element-demo>
 ```
 -->
 ```html
-<h2>[[date]]</h2>
-<udes-moment
-    input="2017-09-13 11:26:35"
-    input-format="YYYY-MM-DD HH:mm:ss"
-    output-format="dddd LL LT"
-    output="{{date}}"
-></udes-moment>
+<udes-moment-demo></udes-moment>
 ```
