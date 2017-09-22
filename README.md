@@ -48,7 +48,7 @@ module.exports = {
 <custom-element-demo>
   <template>
     <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="demo/udes-element-demo.html">
+    <link rel="import" href="demo/udes-moment-demo.html">
     <next-code-block></next-code-block>
   </template>
 </custom-element-demo>
