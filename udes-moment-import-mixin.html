@@ -1,0 +1,250 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../udes-language-mixin/udes-language-mixin.html">
+
+<script>
+  /**
+   * @namespace UdeS
+   */
+  window.UdeS = window.UdeS || {};
+
+  // Boolean to indicate that Moment.js is currently loading
+  UdeS.MomentIsLoading = UdeS.MomentIsLoading || false;
+
+  // Boolean to indicate that we are loading some languages
+  UdeS.MomentLanguagesLoading = UdeS.MomentLanguagesLoading || [];
+
+  /**
+   * UdeS moment import mixin.
+   *
+   * This mixin load the Moment.js library and the locale files
+   * automatically when the language changed.
+   *
+   * It is intended to be use only in the `udes-moment` element.
+   *
+   * @memberOf UdeS
+   * @mixinFunction
+   * @polymer
+   * @polymerMixin
+   * @param {Class} superClass The super class.
+   * @return {Class} Class.
+   */
+  UdeS.MomentImportMixin = (superClass) => {
+    return class extends UdeS.LanguageMixin(superClass) {
+      /**
+       * Return the properties.
+       * @static
+       * @return {Object} Properties.
+       */
+      static get properties() {
+        return {
+          /**
+           * The relative path to Moment.js libray when using
+           * this mixin from another component NOT in udes-moment.
+           *
+           * If your component is in src/myapp/myelement.html and
+           * it use this mixin, you should override this property
+           * with the value `../../bower_components`
+           * @public
+           */
+          momentImportPath: {
+            type: String,
+            value: '..',
+          },
+
+          /**
+           * Indicate moment is loaded and ready to use.
+           * @deprecated Will be remove in the next major version (3.0.0)
+           * @public
+           */
+          isMomentReady: {
+            notify: true,
+            type: Boolean,
+            value: false,
+          },
+
+          /**
+           * Moment.js global variable.
+           * @public
+           */
+          moment: {
+            type: Object,
+          },
+
+          /**
+           * Timestamp use to indicate that the Moment.js library is loaded
+           * and the language is changed, to compute again the dates.
+           * @public
+           */
+          timestampMoment: {
+            notify: true,
+            type: Number,
+          },
+        };
+      }
+
+      /**
+       * Return the observers.
+       * @static
+       * @return {Object} Observers.
+       */
+      static get observers() {
+        return ['__languageChanged(isMomentReady, language)'];
+      }
+
+      /**
+       * Load the Moment.js library.
+       * @public
+       */
+      ready() {
+        super.ready();
+
+        if (typeof window.moment === 'undefined') {
+          if (!window.UdeS.MomentIsLoading) {
+            window.UdeS.MomentIsLoading = true;
+            this._loadMomentJs();
+          } else {
+            this._waitToLoadMomentJs();
+          }
+        } else {
+          // Moment is already loaded. e.g. by other components.
+          this.__momentIsLoaded();
+        }
+      }
+
+      /**
+       * Import a script into a page and return a promise that is resolved
+       * when the script is loaded.
+       * @protected
+       * @param {String} path Path of the script.
+       * @return {Promise} Promise.
+       */
+      _importScript(path) {
+        return new Promise((resolve) => {
+          let script = document.createElement('script');
+          script.src = this.resolveUrl(path);
+          script.onload = () => {
+            resolve();
+          };
+          document.body.appendChild(script);
+        });
+      }
+
+      /**
+       * Loads Moment.js library and set the `isMomentReady` when loaded.
+       * @protected
+       */
+      _loadMomentJs() {
+        this._importScript(`${this.momentImportPath}/moment/min/moment.min.js`)
+          .then(() => this.__momentIsLoaded());
+      }
+
+      /**
+       * Wait till loading Moment.js complete and then set the `timestampMoment`
+       * property.
+       * @protected
+       */
+      _waitToLoadMomentJs() {
+        if (typeof window.moment !== 'undefined') {
+          this.__momentIsLoaded();
+        } else {
+          window.setTimeout(() => this._waitToLoadMomentJs(), 1);
+        }
+      }
+
+      /**
+       * Wait till loading Moment.js complete and then set the `isMomentReady`
+       * property.
+       * @protected
+       */
+      _waitToLoadMomentLanguage() {
+        const loadedLanguages = moment.locales();
+        const isLanguageLoaded = loadedLanguages.indexOf(this.language) !== -1;
+
+        if (isLanguageLoaded) {
+          this.timestampMoment = Date.now();
+        } else {
+          window.setTimeout(() => this._waitToLoadMomentLanguage(), 1);
+        }
+      }
+
+      /**
+       * Dispatch the `udes-moment-language-changed` event.
+       * @deprecated
+       * @private
+       */
+      __dispatchEvent() {
+        const languageChangedEvent = new CustomEvent(
+          'udes-moment-language-changed', {
+            bubbles: true,
+            composed: true,
+          }
+        );
+
+        this.dispatchEvent(languageChangedEvent);
+      }
+
+      /**
+       * Update the language of the Moment.js library and import the language
+       * file if necessary.
+       * @param {Boolean} isMomentReady True if the moment library is loaded.
+       * @param {String} language Current language.
+       * @private
+       */
+      __languageChanged(isMomentReady, language) {
+        if (!isMomentReady) {
+          return;
+        }
+
+        const loadedLanguages = moment.locales();
+        const isLanguageLoaded = loadedLanguages.indexOf(language) !== -1;
+
+        if (isLanguageLoaded) {
+          moment.locale(language);
+          this.timestampMoment = Date.now();
+          this.__dispatchEvent();
+          return;
+        }
+
+        // Is the language already loading?
+        if (UdeS.MomentLanguagesLoading.indexOf(language) !== -1) {
+          this._waitToLoadMomentLanguage();
+          return;
+        }
+
+        // Push the language inside the loading languages
+        UdeS.MomentLanguagesLoading.push(language);
+
+        // Import the script
+        const script = `${this.momentImportPath}/moment/locale/${language}.js`;
+        this._importScript(script).then(() => {
+          // Find the index of the loading language
+          const index = UdeS.MomentLanguagesLoading.indexOf(language);
+
+          // Remove the language from the languages loading array
+          UdeS.MomentLanguagesLoading.splice(index, 1);
+
+          // Define the locale
+          moment.locale(language);
+
+          // Update the timestampMoment
+          this.timestampMoment = Date.now();
+
+          // Dispatch the event
+          this.__dispatchEvent();
+        });
+      }
+
+      /**
+       * Update the properties as the Moment.js library is loaded.
+       * @private
+       */
+      __momentIsLoaded() {
+        this.setProperties({
+          isMomentReady: true,
+          moment: moment,
+          timestampMoment: Date.now(),
+        });
+      }
+    };
+  };
+</script>

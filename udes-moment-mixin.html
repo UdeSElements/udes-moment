@@ -1,0 +1,196 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="udes-moment-import-mixin.html">
+
+<script>
+  /**
+   * @namespace UdeS
+   */
+  window.UdeS = window.UdeS || {};
+
+  /**
+   * The `UdeS.MomentMixin` provide the `date` and `interval` functions
+   * that are automatically updated when the `language` is updated.
+   *
+   * You can use the `formatDate` and `formatInterval` functions, but they
+   * are note automatically updated.
+   *
+   * @memberOf UdeS
+   * @mixinFunction
+   * @polymer
+   * @polymerMixin
+   * @param {Class} superClass The super class.
+   * @return {Class} Class.
+   */
+  UdeS.MomentMixin = (superClass) => {
+    return class extends UdeS.MomentImportMixin(superClass) {
+      /**
+       * Return the properties.
+       * @static
+       * @return {Object} Properties.
+       */
+      static get properties() {
+        return {
+          /**
+           * Function to format a date.
+           * @public
+           */
+          date: {
+            type: Function,
+            computed: '__computeDateFunction(timestampMoment, language)',
+          },
+
+          /**
+           * Function to format an interval.
+           * @public
+           */
+          interval: {
+            type: Function,
+            computed: '__computeIntervalFunction(timestampMoment, language, ' +
+            'intervalSeparator)',
+          },
+
+          /**
+           * Interval sepator.
+           * @public
+           */
+          intervalSeparator: {
+            type: String,
+            value: 'to',
+          },
+
+          /**
+           * The relative path to Moment.js libray when using
+           * this mixin from another component NOT in udes-moment.
+           *
+           * If your component is in src/myapp/myelement.html and
+           * it use this mixin, you should override this property
+           * with the value `../../bower_components`.
+           * @override UdeS.MomentImportMixin.momentImportPath
+           * @public
+           */
+          momentImportPath: {
+            type: String,
+            value: '..',
+          },
+        };
+      }
+
+      /**
+       * Format a date.
+       * @param {String} input Input.
+       * @param {String} inputFormat Input format.
+       * @param {String} outputFormat Output format.
+       * @return {String} Formatted date.
+       */
+      formatDate(input, inputFormat, outputFormat) {
+        // Create a new Moment.js date
+        let date = moment(input, inputFormat);
+
+        // Set the locale
+        date = date.locale(this.language);
+
+        // Format the Moment.js date
+        return date.format(outputFormat);
+      }
+
+      /**
+       * Format an interval from formatted dates. They must be
+       * in the same format to compute the interval.
+       * @param {String} firstOutputDate First formatted date.
+       * @param {String} secondOutputDate Second formatted date.
+       * @param {String} separator Sepator.
+       * @return {String} Interval.
+       */
+      formatInterval(firstOutputDate, secondOutputDate,
+                     separator = this.separator) {
+        if (!firstOutputDate || !secondOutputDate) {
+          return '';
+        }
+
+        const firstDateSplit = firstOutputDate.split(' ');
+        const secondDateSplit = secondOutputDate.split(' ');
+        let minify = true;
+        let firstDateOutput = '';
+        let secondDateOutput = '';
+
+        // Impossible to calculate the correct interval if the dates
+        // are not in the same format
+        if (firstDateSplit.length !== secondDateSplit.length) {
+          return '';
+        }
+
+        // Append each element in reverse order
+        for (let i = firstDateSplit.length - 1; i >= 0; --i) {
+          if (firstDateSplit[i] !== secondDateSplit[i]) {
+            minify = false;
+          }
+
+          if (!minify) {
+            firstDateOutput = `${firstDateSplit[i]} ${firstDateOutput}`;
+          }
+
+          secondDateOutput = `${secondDateSplit[i]} ${secondDateOutput}`;
+        }
+
+        // Trim the dates to remove useless spaces
+        firstDateOutput = firstDateOutput.trim();
+        secondDateOutput = secondDateOutput.trim();
+
+        // The dates are not equals
+        if (firstDateOutput.length) {
+          return `${firstDateOutput} ${separator} ${secondDateOutput}`;
+        }
+
+        // The first date equals the seoond
+        return secondDateOutput;
+      }
+
+      /**
+       * Compute and return the date function.
+       * @param {Number} timestampMoment Moment.js timestamp.
+       * @param {String} language Language.
+       * @return {Function} Date function.
+       * @private
+       */
+      __computeDateFunction(timestampMoment, language) {
+        if (typeof timestampMoment === 'undefined') {
+          // Return the input if Moment.js is not loaded yet
+          return (input, inputFormat, outputFormat) => input;
+        }
+
+        return (input, inputFormat, outputFormat) =>
+          this.formatDate(input, inputFormat, outputFormat);
+      }
+
+      /**
+       * Compute and return the interval function.
+       * @param {Number} timestampMoment Moment.js timestamp.
+       * @param {String} language Language.
+       * @param {String} intervalSeparator Separator.
+       * @return {Function} Interval function.
+       * @private
+       */
+      __computeIntervalFunction(timestampMoment, language, intervalSeparator) {
+        if (typeof timestampMoment === 'undefined') {
+          return (firstInput, secondInput, inputFormat, outputFormat,
+                  separator = intervalSeparator) => {
+            // Return the interval if Moment.js is not loaded yet
+            return `${firstInput} ${separator} ${firstInput}`;
+          };
+        }
+
+        return (firstInput, secondInput, inputFormat, outputFormat,
+                separator = intervalSeparator) => {
+          let firstDate = this.formatDate(
+            firstInput, inputFormat, outputFormat
+          );
+          let secondDate = this.formatDate(
+            secondInput, inputFormat, outputFormat
+          );
+
+          return this.formatInterval(firstDate, secondDate, separator);
+        };
+      }
+    };
+  };
+</script>

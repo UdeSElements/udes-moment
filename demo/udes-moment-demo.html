@@ -1,0 +1,77 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../udes-language-mixin/udes-language-mixin.html">
+<link rel="import" href="../udes-moment.html">
+
+<dom-module id="udes-moment-demo">
+  <template>
+    <h2>[[date]]</h2>
+
+    <udes-moment
+      input-format="YYYY-MM-DDTHH:mm:ss"
+      input="2017-09-13T09:26:35"
+      output-format="[[outputFormat]]"
+      output="{{date}}"
+    ></udes-moment>
+
+    <paper-button on-tap="toggleLanguage">Toggle language</paper-button>
+  </template>
+  <script>
+    /**
+     * @polymer
+     * @customElement
+     * @demo
+     * @extends {Polymer.Element}
+     * @appliesMixin UdeS.LanguageMixin
+     * @appliesMixin Polymer.GestureEventListeners
+     */
+    class UdeSMomentDemo extends
+      Polymer.GestureEventListeners(UdeS.LanguageMixin(Polymer.Element)) {
+      /**
+       * Return the HTML tag.
+       * @static
+       * @return {String} HTML tag.
+       */
+      static get is() {
+        return 'udes-moment-demo';
+      }
+
+      /**
+       * Return the properties.
+       * @static
+       * @return {Object} Properties.
+       */
+      static get properties() {
+        return {
+          /**
+           * Date.
+           * @public
+           */
+          date: {
+            type: String,
+          },
+
+          /**
+           * Output format.
+           * @public
+           */
+          outputFormat: {
+            type: String,
+          },
+        };
+      }
+
+      /**
+       * Toggle language between French and English.
+       * @public
+       */
+      toggleLanguage() {
+        const nextLanguage = this.language === 'fr' ? 'en' : 'fr';
+        this.updateLanguage(nextLanguage);
+      }
+    }
+
+    window.customElements.define(UdeSMomentDemo.is, UdeSMomentDemo);
+  </script>
+</dom-module>

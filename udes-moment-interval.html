@@ -1,0 +1,150 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="udes-moment-mixin.html">
+
+<!--
+`udes-moment-interval` can format a interval (*firstInput* and *secondInput*)
+accordly to its format (*input-format*) and the wanted format (*output-format*).
+
+The result will be stocked inside the `output` property.
+
+The result will be displayed inside the component if the `inline`
+property is set.
+
+## Inside the `output` property
+```html
+<h2>[[date]]</h2>
+<udes-moment-interval
+    first-input="2017-09-13"
+    input-format="YYYY-MM-DD"
+    output-format="dddd LL LT"
+    output="{{output}}"
+    second-input="2017-09-20"
+></udes-moment-interval>
+```
+
+## Inline date with the `inline` property
+```html
+<h2>
+    <udes-moment-interval
+        first-input="2017-09-13"
+        inline
+        input-format="YYYY-MM-DD"
+        output-format="dddd LL LT"
+        second-input="2017-09-20"
+    ></udes-moment-interval>
+</h2>
+```
+
+@demo demo/index.html
+-->
+<dom-module id="udes-moment-interval">
+  <template strip-whitespace>
+    <template is="dom-if" if="[[inline]]">
+      [[output]]
+    </template>
+  </template>
+  <script>
+    /**
+     * @polymer
+     * @customElement
+     * @extends {Polymer.Element}
+     * @appliesMixin UdeS.MomentMixin
+     */
+    class UdeSMomentInterval extends UdeS.MomentMixin(Polymer.Element) {
+      /**
+       * Return the HTML tag.
+       * @static
+       * @return {String} HTML tag.
+       */
+      static get is() {
+        return 'udes-moment-interval';
+      }
+
+      /**
+       * Return the properties.
+       * @static
+       * @return {Object} Properties.
+       */
+      static get properties() {
+        return {
+          /**
+           * True to display the output in the template.
+           * @public
+           */
+          inline: {
+            type: Boolean,
+            value: false,
+          },
+
+          /**
+           * The first input datetime.
+           * @public
+           */
+          firstInput: {
+            type: String,
+          },
+
+          /**
+           * The second input datetime.
+           * @public
+           */
+          secondInput: {
+            type: String,
+          },
+
+          /**
+           * The datetime input format.
+           * @public
+           */
+          inputFormat: {
+            type: String,
+          },
+
+          /**
+           * The output datetime.
+           * @public
+           */
+          output: {
+            type: String,
+            notify: true,
+            computed: '__computeOutput(firstInput, secondInput, inputFormat, ' +
+            'outputFormat, intervalSeparator, date)',
+          },
+
+          /**
+           * The datetime output format.
+           * @public
+           */
+          outputFormat: {
+            type: String,
+          },
+        };
+      }
+
+      /**
+       * Compute the output interval.
+       * @param {String} firstInput First input date.
+       * @param {String} secondInput Second input date.
+       * @param {String} inputFormat Input format date.
+       * @param {String} outputFormat Output format date.
+       * @param {String} intervalSeparator Interval separator.
+       * @param {Function} interval Interval function.
+       * @return {String} Output date.
+       * @private
+       */
+      __computeOutput(firstInput, secondInput, inputFormat,
+                      outputFormat, intervalSeparator, interval) {
+        if (!interval) {
+          return `${firstInput} ${intervalSeparator} ${firstInput}`;
+        }
+
+        return interval(firstInput, secondInput, inputFormat,
+          outputFormat, intervalSeparator
+        );
+      }
+    }
+
+    window.customElements.define(UdeSMomentInterval.is, UdeSMomentInterval);
+  </script>
+</dom-module>

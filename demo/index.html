@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>udes-moment demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import"
+        href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="udes-moment-demo.html">
+  <link rel="import" href="udes-moment-format-table.html">
+
+  <style is="custom-style" include="demo-pages-shared-styles">
+  </style>
+</head>
+<body>
+<div class="vertical-section-container centered">
+  <h3>LL format</h3>
+  <demo-snippet>
+    As the component use the <i>UdeS.LanguageMixin</i>, all dates will be
+    formatted with the current language, by default
+    French. If you update the language by using the <i>updateLanguage()</i>
+    function, all dates will be updated
+    automatically.
+    <template>
+      <udes-moment-demo output-format="LL"></udes-moment-demo>
+    </template>
+  </demo-snippet>
+
+  <h3>LLLL format</h3>
+  <demo-snippet>
+    <template>
+      <udes-moment-demo output-format="LLLL"></udes-moment-demo>
+    </template>
+  </demo-snippet>
+
+  <h3>Hour</h3>
+  <demo-snippet>
+    <template>
+      <udes-moment-demo output-format="h[&nbsp;h&nbsp;]mm"></udes-moment-demo>
+    </template>
+  </demo-snippet>
+
+  <h3>Format table</h3>
+  <demo-snippet>
+    <template>
+      <udes-moment-format-table></udes-moment-format-table>
+    </template>
+  </demo-snippet>
+</div>
+</body>
+</html>
