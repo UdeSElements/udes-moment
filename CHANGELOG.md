@@ -11,16 +11,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove the deprecated `__dispatchEvent` function along with the 
 `udes-moment-language-changed` event.
 
-## [Unreleased - 2.1.2]
+## [2.1.2] - 2017-09-22
 ### Changed
-- Update documentation.
+- Update documentation for www.webcomponents.org.
 
 ## [2.1.1] - 2017-09-22
 ### Changed
 - Use eslint-config-udes and add the pre-commit hook.
 - Interval dates are now trimmed.
 
-## [2.1.0] - 2017-09-20 11:53:39
+## [2.1.0] - 2017-09-20
 ### Added
 - Add the `udes-moment-format-table` demo.
 - Add the `UdeS.MomentMixin` and the `udes-moment-interval` component.
