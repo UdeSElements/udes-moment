@@ -25,20 +25,21 @@ If you use one of the components or one of the mixins, you need to update your
 `polymer.json` to includes the Moment.js files:
 ```json
 {
-    "extraDependencies": [
-        "bower_components/moment/min/moment.min.js",
-        "bower_components/moment/locale/*.js"
-    ],
+  "extraDependencies": [
+    "bower_components/moment/min/moment.min.js",
+    "bower_components/moment/locale/*.js"
+  ],
 }
 ```
 
 You also need to update your `sw-precache-config.js` accordingly:
 ```javascript
+/* eslint-disable-next-line no-undef */
 module.exports = {
-    staticFileGlobs: [
-        'bower_components/moment/locale/*',
-        'bower_components/moment/min/moment.min.js',
-    ],
+  staticFileGlobs: [
+    'bower_components/moment/locale/*',
+    'bower_components/moment/min/moment.min.js',
+  ],
 };
 ```
 
