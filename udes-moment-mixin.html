@@ -59,6 +59,15 @@
           },
 
           /**
+           * Moment function.
+           * @public
+           */
+          moment: {
+            type: Function,
+            computed: '__computeMomentFunction(timestampMoment)',
+          },
+
+          /**
            * The relative path to Moment.js libray when using
            * this mixin from another component NOT in udes-moment.
            *
@@ -190,6 +199,20 @@
 
           return this.formatInterval(firstDate, secondDate, separator);
         };
+      }
+
+      /**
+       * Compute the moment function.
+       * @param {Number} timestampMoment Timestamp of Moment.
+       * @return {Function}
+       * @private
+       */
+      __computeMomentFunction(timestampMoment) {
+        if (timestampMoment) {
+          return (...args) => window.moment(...args);
+        }
+
+        return () => ({});
       }
     };
   };
