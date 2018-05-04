@@ -134,8 +134,7 @@
        * @protected
        */
       _loadMomentJs() {
-        this._importScript(`${this.momentImportPath}/moment/min/moment.min.js`)
-          .then(() => this.__momentIsLoaded());
+        this._importScript(`${this.momentImportPath}/moment/min/moment.min.js`).then(() => this.__momentIsLoaded());
       }
 
       /**
@@ -177,7 +176,7 @@
           'udes-moment-language-changed', {
             bubbles: true,
             composed: true,
-          }
+          },
         );
 
         this.dispatchEvent(languageChangedEvent);

@@ -111,7 +111,7 @@
        * @return {String} Interval.
        */
       formatInterval(firstOutputDate, secondOutputDate,
-        separator = this.separator) {
+                     separator = this.separator) {
         if (!firstOutputDate || !secondOutputDate) {
           return '';
         }
@@ -182,19 +182,19 @@
       __computeIntervalFunction(timestampMoment, language, intervalSeparator) {
         if (typeof timestampMoment === 'undefined') {
           return (firstInput, secondInput, inputFormat, outputFormat,
-            separator = intervalSeparator) => {
+                  separator = intervalSeparator) => {
             // Return the interval if Moment.js is not loaded yet
             return `${firstInput} ${separator} ${firstInput}`;
           };
         }
 
         return (firstInput, secondInput, inputFormat, outputFormat,
-          separator = intervalSeparator) => {
+                separator = intervalSeparator) => {
           let firstDate = this.formatDate(
-            firstInput, inputFormat, outputFormat
+            firstInput, inputFormat, outputFormat,
           );
           let secondDate = this.formatDate(
-            secondInput, inputFormat, outputFormat
+            secondInput, inputFormat, outputFormat,
           );
 
           return this.formatInterval(firstDate, secondDate, separator);

@@ -12,8 +12,7 @@
   ],
   "devDependencies": {
     "eslint-config-udes": "^0.2.1",
-    "npm-run-all": "^4.1.2",
-    "pre-commit": "^1.2.2"
+    "npm-run-all": "^4.1.2"
   },
   "scripts": {
     "format": "npm-run-all format:*",
@@ -25,8 +24,5 @@
     "lint:json": "eslint . --ext json",
     "lint:markdown": "eslint . --ext md",
     "lint:polymer": "polymer lint"
-  },
-  "pre-commit": [
-    "lint"
-  ]
+  }
 }
