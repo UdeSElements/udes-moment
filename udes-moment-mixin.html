@@ -95,6 +95,10 @@
         // Create a new Moment.js date
         let date = moment(input, inputFormat);
 
+        if( !date.isValid() ) {
+          return '';
+        }
+
         // Set the locale
         date = date.locale(this.language);
 

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 `udes-moment-language-changed` event.
 
 
+## [2.2.1] - 2018-09-07
+### Changed
+- Return an empty string when the date is invalid.
+
 ## [2.2.0] - 2018-05-04
 ### Added
 - Add the `moment` function into the `UdeS.MomentMixin`.

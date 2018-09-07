@@ -1,6 +1,6 @@
 {
   "name": "udes-moment",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "UdeS moment element wrapper for Moment.js",
   "author": "Université de Sherbrooke",
   "license": "MIT",
